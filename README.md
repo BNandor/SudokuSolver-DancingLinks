@@ -12,10 +12,10 @@ https://arxiv.org/pdf/cs/0011047v1.pdf
 ## Input format
 
 A puzzle must be in a single row, empty cells are represented as dots:
-For example:
+
 >3...8.......7....51..............36...2..4....7...........6.13..452...........8..
 
-is a valid input.
+
 
 The executable solves all the puzzles in the input file.
 
