@@ -15,57 +15,57 @@ public:
 	block *C;
 	int N;
 };
-struct valasztas{
+struct choice{
 	int val;
 	int i,j;
 };
 
-#define link_sorszam 729
-#define link_oszlopszam 324
-#define sudoku_sor 9
-#define sudoku_oszlop 9
-#define sudoku_ossz_cellaszam 81
-#define lehetoseg_cella 9
+#define link_rowcount 729
+#define link_columncount 324
+#define sudoku_row 9
+#define sudoku_column 9
+#define sudoku_total_cell_count 81
+#define possibility_per_cell 9
 
 
-vector<block*> sorok[link_sorszam];
-vector<block*> oszlopok[link_oszlopszam];
+vector<block*> rows[link_rowcount];
+vector<block*> columns[link_columncount];
 vector<block*> header;
 
-vector<valasztas> valasztasok;
-int mat[link_sorszam][link_oszlopszam];
-int solution_mat[sudoku_sor][sudoku_oszlop];
+vector<choice> choices;
+int mat[link_rowcount][link_columncount];
+int solution_mat[sudoku_row][sudoku_column];
 
 void put(int i,int j){
 	block* b = new block();
-	sorok[i].push_back(b);
-	oszlopok[j].push_back(b);		
+	rows[i].push_back(b);
+	columns[j].push_back(b);		
 }	
 
-void general_valasztasok(){//0.024s
+void generate_choices(){//0.024s
 	
-	for (int i = 0; i < sudoku_sor; i++) {
-		for (int j = 0; j < sudoku_oszlop; j++) {
-			for (int k = 0; k < lehetoseg_cella; k++) {
-				valasztas v;v.val=k+1;v.i=i;v.j=j;
-				valasztasok.push_back(v);
+	for (int i = 0; i < sudoku_row; i++) {
+		for (int j = 0; j < sudoku_column; j++) {
+			for (int k = 0; k < possibility_per_cell; k++) {
+				choice v;v.val=k+1;v.i=i;v.j=j;
+				choices.push_back(v);
 			}
 		}
 	}
 }
 
-void general_poziciok(){
-	for (int i = 0; i < link_sorszam; i++) {
-		sorok[i].resize(0);
+void generate_positions(){
+	for (int i = 0; i < link_rowcount; i++) {
+
 	}
-	for (int i = 0; i < link_oszlopszam; i++) {
-		oszlopok[i].resize(0);
+	for (int i = 0; i < link_columncount; i++) {
+		columns[i].resize(0);
 	}
 	//generate blocks representing positions on field
 	int k=0;
 	int offset=0;
-	for (int i = 0; i < sudoku_ossz_cellaszam; i++) {
-		for (int j = 0; j < lehetoseg_cella; j++) {
+	for (int i = 0; i < sudoku_total_cell_count; i++) {
+		for (int j = 0; j < possibility_per_cell; j++) {
 			put(k,i);		
 //			mat[k][i]=1;
 			++k;
@@ -73,78 +73,78 @@ void general_poziciok(){
 	}
 	//generate blocks representing the fact that a number appears in a row
 	
-	offset = sudoku_ossz_cellaszam;
+	offset = sudoku_total_cell_count;
 	k=0;
-	for (int i = 0; i < sudoku_ossz_cellaszam; i++) {
-		for (int j = 0; j < lehetoseg_cella; j++) {
+	for (int i = 0; i < sudoku_total_cell_count; i++) {
+		for (int j = 0; j < possibility_per_cell; j++) {
 
-			//mat[k][offset + (valasztasok[k].val-1) + sudoku_oszlop*valasztasok[k].i]=1;
+			//mat[k][offset + (choices[k].val-1) + sudoku_column*choices[k].i]=1;
 			
-			put(k,offset + (valasztasok[k].val-1) + sudoku_oszlop*valasztasok[k].i);
+			put(k,offset + (choices[k].val-1) + sudoku_column*choices[k].i);
 			++k;
 		}
 	}
 	
-	offset += sudoku_ossz_cellaszam;
+	offset += sudoku_total_cell_count;
 	k=0;
-	for (int i = 0; i < sudoku_ossz_cellaszam; i++) {
-		for (int j = 0; j < lehetoseg_cella; j++) {
-			//mat[k][offset + (valasztasok[k].val-1) + sudoku_oszlop*valasztasok[k].j]=1;
+	for (int i = 0; i < sudoku_total_cell_count; i++) {
+		for (int j = 0; j < possibility_per_cell; j++) {
+			//mat[k][offset + (choices[k].val-1) + sudoku_column*choices[k].j]=1;
 			
-			put(k,offset + (valasztasok[k].val-1) + sudoku_oszlop*valasztasok[k].j);
+			put(k,offset + (choices[k].val-1) + sudoku_column*choices[k].j);
 			++k;
 		}
 	}
 
-	offset += sudoku_ossz_cellaszam;
+	offset += sudoku_total_cell_count;
 	k=0;
-	for (int i = 0; i < sudoku_ossz_cellaszam; i++) {
-		for (int j = 0; j < lehetoseg_cella; j++) {
+	for (int i = 0; i < sudoku_total_cell_count; i++) {
+		for (int j = 0; j < possibility_per_cell; j++) {
 				
-			//mat[k][offset + (valasztasok[k].val-1) + sudoku_oszlop*((valasztasok[k].i/3)*3 + valasztasok[k].j/3)]=1;
-			put(k,offset + (valasztasok[k].val-1) + sudoku_oszlop*((valasztasok[k].i/3)*3 + valasztasok[k].j/3));
+			//mat[k][offset + (choices[k].val-1) + sudoku_column*((choices[k].i/3)*3 + choices[k].j/3)]=1;
+			put(k,offset + (choices[k].val-1) + sudoku_column*((choices[k].i/3)*3 + choices[k].j/3));
 			++k;
 		}
 	}
 	
 
 }
-void lenullaz();
-void kiir();
+void nullify();
+void print();
 block * root;
 void init(){	
 	root=new block();
 	//link together the blocks row by row
-	for (int i = 0; i < link_sorszam; i++) {
-		for (int j = 0; j < sorok[i].size()-1; j++) {
-			sorok[i][j]->R=sorok[i][j+1];
+	for (int i = 0; i < link_rowcount; i++) {
+		for (int j = 0; j < rows[i].size()-1; j++) {
+			rows[i][j]->R=rows[i][j+1];
 		}
-		sorok[i][sorok[i].size()-1]->R=sorok[i][0];
-		for (int j = 1; j < sorok[i].size(); j++) {
-			sorok[i][j]->L=sorok[i][j-1];
+		rows[i][rows[i].size()-1]->R=rows[i][0];
+		for (int j = 1; j < rows[i].size(); j++) {
+			rows[i][j]->L=rows[i][j-1];
 		}
-		sorok[i][0]->L=sorok[i][sorok[i].size()-1];
+		rows[i][0]->L=rows[i][rows[i].size()-1];
 	}
 	//link together the blocks column by column
-	for (int i = 0; i < link_oszlopszam; i++) {
-//		if(oszlopok[i].size()==0)continue;//unnecessary when mat is filDd up entirely
-		for (int j = 0; j < oszlopok[i].size()-1; j++) {
-			(oszlopok[i][j])->D=oszlopok[i][j+1];
+	for (int i = 0; i < link_columncount; i++) {
+//		if(columns[i].size()==0)continue;//unnecessary when mat is filDd up entirely
+		for (int j = 0; j < columns[i].size()-1; j++) {
+			(columns[i][j])->D=columns[i][j+1];
 		}
-		oszlopok[i][oszlopok[i].size()-1]->D=oszlopok[i][0];
-		for (int j = 1; j < oszlopok[i].size(); j++) {
-			oszlopok[i][j]->U=oszlopok[i][j-1];
+		columns[i][columns[i].size()-1]->D=columns[i][0];
+		for (int j = 1; j < columns[i].size(); j++) {
+			columns[i][j]->U=columns[i][j-1];
 		}
-		oszlopok[i][0]->U=oszlopok[i][oszlopok[i].size()-1];
+		columns[i][0]->U=columns[i][columns[i].size()-1];
 	}
 	
 	header.resize(0);	
 	//init header
-	for (int i = 0; i < link_oszlopszam; i++) {
+	for (int i = 0; i < link_columncount; i++) {
 		block* b  =new block();
-		b->S = oszlopok[i].size();
+		b->S = columns[i].size();
 
-		b->D=oszlopok[i][0];
+		b->D=columns[i][0];
 		b->U=b->D->U;
 		b->U->D=b;
 		b->D->U=b;
@@ -157,13 +157,13 @@ void init(){
 		header.push_back(b);
 	}
 	//link header together by row
-	for (int i = 0; i < link_oszlopszam-1; i++) {
+	for (int i = 0; i < link_columncount-1; i++) {
 		header[i]->R=header[i+1];			
 		header[i+1]->L=header[i];
 	}
 	header[0]->L=root;
-	root->L=header[link_oszlopszam-1];
-	header[link_oszlopszam-1]->R=root;
+	root->L=header[link_columncount-1];
+	header[link_columncount-1]->R=root;
 	root->R=header[0];
 
 }
@@ -219,41 +219,41 @@ block* mincolumn(){
 return c;
 }
 
-block* O[sudoku_ossz_cellaszam];
+block* O[sudoku_total_cell_count];
 int to_solve;
 
 void solve(int k);
-void beolvas_megold(istream& file){
+void read_and_solve(istream& file){
 
-	to_solve=sudoku_ossz_cellaszam;
+	to_solve=sudoku_total_cell_count;
 
 	char c;
 	vector<int > covered;
 	int constraint_index;
 	int offset;
-	for(int i=0;i<sudoku_sor;i++){
-		for(int j=0;j<sudoku_oszlop;j++){
+	for(int i=0;i<sudoku_row;i++){
+		for(int j=0;j<sudoku_column;j++){
 			file>>c;
 			if( c != '.'){        
 				to_solve--;
 				offset = 0;
 
-				constraint_index = i*lehetoseg_cella +j;
+				constraint_index = i*possibility_per_cell +j;
 				cover(header[constraint_index]);
 				covered.push_back(constraint_index);	
 
-				offset += sudoku_ossz_cellaszam;
-				constraint_index = offset + (c-'0'-1) + sudoku_oszlop*i ;
+				offset += sudoku_total_cell_count;
+				constraint_index = offset + (c-'0'-1) + sudoku_column*i ;
 				cover(header[constraint_index]);
 				covered.push_back(constraint_index);	
 				
-				offset += sudoku_ossz_cellaszam;
-				constraint_index = offset + (c-'0'-1) + sudoku_oszlop*j;
+				offset += sudoku_total_cell_count;
+				constraint_index = offset + (c-'0'-1) + sudoku_column*j;
 				cover(header[constraint_index]);
 				covered.push_back(constraint_index);	
 				
-				offset += sudoku_ossz_cellaszam;
-				constraint_index =offset + (c-'0'-1) + sudoku_oszlop*((i/3)*3 + j/3);
+				offset += sudoku_total_cell_count;
+				constraint_index =offset + (c-'0'-1) + sudoku_column*((i/3)*3 + j/3);
 				cover(header[constraint_index]);
 				covered.push_back(constraint_index);	
 				
@@ -268,7 +268,7 @@ void beolvas_megold(istream& file){
 
 }
 
-bool checkIntegrity(int mat[sudoku_sor][sudoku_oszlop]);
+bool checkIntegrity(int mat[sudoku_row][sudoku_column]);
 int solution_sum;
 int solution_before;
 void solve(int k){
@@ -277,31 +277,31 @@ void solve(int k){
 		block* j;
 		for (int i = 0; i < to_solve; i++) {//to solve
 			j=O[i];
-			int sor,oszlop,ertek;
+			int row,column,ertek;
 			int temp;
 			do{
 				temp = j->C->N;
-				if(temp>=sudoku_ossz_cellaszam && temp<2*sudoku_ossz_cellaszam ){//we have got the row constraint
-					sor = (temp-sudoku_ossz_cellaszam)/sudoku_sor;
-					ertek =(temp-sudoku_ossz_cellaszam)%lehetoseg_cella+1;				      	
+				if(temp>=sudoku_total_cell_count && temp<2*sudoku_total_cell_count ){//we have got the row constraint
+					row = (temp-sudoku_total_cell_count)/sudoku_row;
+					ertek =(temp-sudoku_total_cell_count)%possibility_per_cell+1;				      	
 				}
-				if(temp>=2*sudoku_ossz_cellaszam && temp < 3*sudoku_ossz_cellaszam){//we have got the row constraint
-					oszlop = (temp-2*sudoku_ossz_cellaszam)/sudoku_sor;
+				if(temp>=2*sudoku_total_cell_count && temp < 3*sudoku_total_cell_count){//we have got the row constraint
+					column = (temp-2*sudoku_total_cell_count)/sudoku_row;
 				}
 				j=j->R;
 			}while(j!=O[i]);
-			solution_mat[sor][oszlop]=ertek;
+			solution_mat[row][column]=ertek;
 		}
 		#ifdef matrixform
-		for (int i = 0; i < sudoku_sor; i++) {
-			for (int j = 0;j < sudoku_oszlop; j++) {
+		for (int i = 0; i < sudoku_row; i++) {
+			for (int j = 0;j < sudoku_column; j++) {
 				cout<<solution_mat[i][j]<<" ";
 			}cout<<endl;
 		}
 		
 		#else	
-		for (int i = 0; i < sudoku_sor; i++) {
-			for (int j = 0;j < sudoku_oszlop; j++) {
+		for (int i = 0; i < sudoku_row; i++) {
+			for (int j = 0;j < sudoku_column; j++) {
 				if(solution_mat[i][j]==0){
 					cout<<".";
 				}else{
@@ -368,21 +368,21 @@ int main(int argc, const char *argv[])
 		return -2;
 	}	
 
-	general_valasztasok();
-	general_poziciok();
+	generate_choices();
+	generate_positions();
 	init();		
 
 	string puzzle;
 	stringstream ss;
 	while(getline(file,puzzle)){
 		ss<<puzzle;
-		beolvas_megold(ss);
+		read_and_solve(ss);
 #ifdef integrity		
 		if(!checkIntegrity(solution_mat)){
 			cout<<"no ok"<<endl;
 
-			for (int i = 0; i < sudoku_sor; i++) {
-				for (int j = 0;j < sudoku_oszlop; j++) {
+			for (int i = 0; i < sudoku_row; i++) {
+				for (int j = 0;j < sudoku_column; j++) {
 					cout<<solution_mat[i][j]<<" ";
 				}cout<<endl;
 			}
@@ -394,9 +394,9 @@ int main(int argc, const char *argv[])
 	cout<<"Total solutions:"<<solution_sum<<endl;	
 #endif	
 	//free memory
-	for (int i = 0; i < link_sorszam; i++) {
-		for (int j = 0; j < sorok[i].size(); j++) {
-			delete sorok[i][j];		
+	for (int i = 0; i < link_rowcount; i++) {
+		for (int j = 0; j < rows[i].size(); j++) {
+			delete rows[i][j];		
 		}
 	}
 
@@ -408,31 +408,31 @@ int main(int argc, const char *argv[])
 
 }
 
-void kiir (){
+void print (){
 	
-	for (int i = 0; i < link_sorszam; i++) {
-		for (int j = 0; j < link_oszlopszam; j++) {
+	for (int i = 0; i < link_rowcount; i++) {
+		for (int j = 0; j < link_columncount; j++) {
 			cout<<mat[i][j];
 		}cout<<endl;
 	}
 	
 }
-void lenullaz(){
-	for (int i = 0; i < link_sorszam; i++) {
-		for (int j = 0; j < link_oszlopszam; j++) {
+void nullify(){
+	for (int i = 0; i < link_rowcount; i++) {
+		for (int j = 0; j < link_columncount; j++) {
 			mat[i][j]=0;
 		}
 	}
 	
 }
 
-bool checkIntegrity(int mat[sudoku_sor][sudoku_oszlop]){
+bool checkIntegrity(int mat[sudoku_row][sudoku_column]){
 
-	int stat[lehetoseg_cella +1]; 
+	int stat[possibility_per_cell +1]; 
 
-	for(int i=0;i<lehetoseg_cella;i++){
+	for(int i=0;i<possibility_per_cell;i++){
 		memset((void*)&stat,0,sizeof(stat));
-		for(int j=0;j<lehetoseg_cella;j++){        
+		for(int j=0;j<possibility_per_cell;j++){        
 			if(mat[i][j]==0)continue;
 			stat[mat[i][j]]++;
 			if(stat[mat[i][j]]>1){
@@ -441,9 +441,9 @@ bool checkIntegrity(int mat[sudoku_sor][sudoku_oszlop]){
 		}                
 	}
 
-	for(int i=0;i<lehetoseg_cella;i++){
+	for(int i=0;i<possibility_per_cell;i++){
 		memset((void*)&stat,0,sizeof(stat));
-		for(int j=0;j<lehetoseg_cella;j++){
+		for(int j=0;j<possibility_per_cell;j++){
 			if(mat[j][i]==0)continue;
 			stat[mat[j][i]]++;
 			if(stat[mat[j][i]]>1){
@@ -451,13 +451,13 @@ bool checkIntegrity(int mat[sudoku_sor][sudoku_oszlop]){
 			}
 		}
 	}
-	int boxstat[lehetoseg_cella][10];
-	for (int i = 0; i <lehetoseg_cella; i++) {
+	int boxstat[possibility_per_cell][10];
+	for (int i = 0; i <possibility_per_cell; i++) {
 		memset((void*)&boxstat[i],0,sizeof(boxstat[i]));
 	}
 
-	for(int i=0;i<lehetoseg_cella;i++){		
-		for(int j=0;j<lehetoseg_cella;j++){
+	for(int i=0;i<possibility_per_cell;i++){		
+		for(int j=0;j<possibility_per_cell;j++){
 			if(mat[j][i]==0)continue;
 			
 			boxstat[(i/3)*3 + j/3][mat[j][i]]++;
