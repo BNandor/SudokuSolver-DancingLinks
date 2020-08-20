@@ -1,5 +1,5 @@
 # SudokuSolver-DancingLinks
-Implementation of the extremely fast algorithm X, using dancing links as main datastructure , solving sudokus.
+Implementation of the extremely fast algorithm X, using dancing links as main data structure , solving sudokus.
 Solves all of the top 95 hardest sudokus in  approximately 0.05 seconds.
 
 https://arxiv.org/pdf/cs/0011047v1.pdf
